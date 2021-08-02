@@ -10,12 +10,15 @@ from syslog import syslog
 
 parser = argparse.ArgumentParser(description='Arp responder for non existent hosts')
 parser.add_argument('iface', type=str, help='Interface name for listen on')
-parser.add_argument('--debug', action="store_true", help='Debug mode, log all requests')
+parser.add_argument('--debug', action="store_true", help='Debug mode, log all to stdout')
 args = parser.parse_args()
 
 
 def log(msg):
-    syslog(msg)
+    if args.debug:
+        print(msg)
+    else:
+        syslog(msg)
 
 
 def handle_packet(packet):
