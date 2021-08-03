@@ -40,7 +40,7 @@ def handle_packet(packet):
         ans2, unans2 = arping(packet.pdst)
         if ans2: return
         ans3, unans3 = arping(packet.pdst)
-        if ans1: return
+        if ans3: return
 
         if unans1 and unans2 and unans3:
             log(f"{packet.pdst}: There is no answer for my three requests. Sending fake answer on {conf.iface}")
