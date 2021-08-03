@@ -27,12 +27,23 @@ def handle_packet(packet):
         return
     
     if packet['ARP'].op == 1: # who-has
+
+        # This is request for gateway, don't try do this
+        if str(packet.pdst).endswith('.1'):
+            return
+
         if args.debug:
             log(f'{packet.pdst}: Received request, src-mac {packet.src}, iface {conf.iface}. Sending same request...')
 
-        ans, unans = arping(packet.pdst)
-        if unans:
-            log(f"{packet.pdst}: There is no answer for my request. Sending fake answer on {conf.iface}")
+        ans1, unans1 = arping(packet.pdst)
+        if ans1: return
+        ans2, unans2 = arping(packet.pdst)
+        if ans2: return
+        ans3, unans3 = arping(packet.pdst)
+        if ans1: return
+
+        if unans1 and unans2 and unans3:
+            log(f"{packet.pdst}: There is no answer for my three requests. Sending fake answer on {conf.iface}")
             response = Ether()/ARP()
             response[Ether].dst = packet[Ether].src
             response[Ether].src = my_mac
@@ -43,10 +54,7 @@ def handle_packet(packet):
             response[ARP].pdst = packet[ARP].psrc
             sendp(response)
             log(f"{packet.pdst}: Done spoofing IP with my mac {my_mac} on {conf.iface}")
-        else:
-            if args.debug:
-                log(f"{packet.pdst}: Received responce on {conf.iface}, skiping spoofing")
-            return
+
 
 conf.verb = 0
 conf.iface = args.iface
