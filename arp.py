@@ -43,6 +43,7 @@ def handle_packet(packet):
         if ans3: return
 
         if unans1 and unans2 and unans3:
+            log(f"{packet.pdst}: Requested by {packet.psrc}, {packet[Ether].src}")
             log(f"{packet.pdst}: There is no answer for my three requests. Sending fake answer on {conf.iface}")
             response = Ether()/ARP()
             response[Ether].dst = packet[Ether].src
